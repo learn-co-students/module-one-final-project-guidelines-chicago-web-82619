@@ -1,0 +1,11 @@
+https://riot-api-libraries.readthedocs.io/en/latest/ddragon.html
+
+https://github.com/aceaofspades/League-of-Legends-Champion-ID-List-Up-to-Qiyana-/blob/master/LoL%20Champ%20IDs%20to%20Qiyana%20(Python)
+>character name/id reference list
+
+http://ddragon.leagueoflegends.com/cdn/9.17.1/data/en_US/champion.json
+>JSON all character data by patch
+
+BR1, EUN1, EUW1, JP1, KR, LA1, LA2, NA1, OC1, TR1, RU, PBE1
+
+http://ruby-journal.com/how-to-override-default-primary-key-id-in-rails/
