@@ -16,6 +16,15 @@ def get_champion_data(patch_number)
   champion_data = response_hash["data"]
 end
 
+def create_champions(champion_data)
+  champions = champion_data.keys
+  champions.each do |champion|
+    key = champion_data[champion]["key"]
+    champion_name = champion_data[champion]["name"]
+    Champion.create(champ_id: key, name: champion_name)
+  end
+end
+
 #returns a list of summoner names
 def get_summoner_names
   # Make an API request for all summoners in a ranked division.
