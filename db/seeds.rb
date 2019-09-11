@@ -5,7 +5,7 @@ require 'json'
 require 'pry'
 require_relative "../config/environment.rb"
 
-API_KEY = "RGAPI-01b882fa-edbb-448f-88d8-4618268535aa"
+API_KEY = "RGAPI-468f0039-c94e-4a6e-8fe8-de22755b38e8"
 REGION = 'na1'
 #use fresh API key before presentation!!!!!!!
 
@@ -30,7 +30,7 @@ end
 
 #Using the summoner name, create a Summoner
 def create_summoner(summoner_name)
-  Summoner.create(summoner_name)
+  Summoner.find_or_create_by(summoner_name)
 end
 
 #Using the summoner name, return single account id
