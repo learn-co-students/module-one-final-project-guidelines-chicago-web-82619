@@ -12,7 +12,8 @@
 
 ActiveRecord::Schema.define(version: 3) do
 
-  create_table "champions", primary_key: "champ_id", force: :cascade do |t|
+  create_table "champions", force: :cascade do |t|
+    t.integer "champ_id"
     t.string "name"
   end
 
