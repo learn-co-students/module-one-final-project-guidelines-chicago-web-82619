@@ -1,14 +1,16 @@
 # THIS IS WHERE WE GET API DATA
-
 require 'rest-client'
 require 'json'
 require 'pry'
 require_relative "../config/environment.rb"
 
+############ CONSTANTS ############
 API_KEY = "RGAPI-468f0039-c94e-4a6e-8fe8-de22755b38e8"
 REGION = 'na1'
 #use fresh API key before presentation!!!!!!!
+###################################
 
+############ METHODS ############
 #return hash of all data for each champion
 def get_champion_data(patch_number)
   response_string = RestClient.get("http://ddragon.leagueoflegends.com/cdn/#{patch_number}/data/en_US/champion.json")
@@ -88,3 +90,16 @@ def create_match(match_data)
     match.save
   end
 end
+#################################
+def seed
+  #1st - Get a list of summoner names.
+  #2nd - Get the accountId for the first summoner.
+  #3rd - Get the matchIds for that accountId.
+  names = get_summoner_names
+  accountIds = names[0...50].map {|name| get_account_id(name)}
+  matchIds = accountIds.map {|accountId| get_match_ids(accountId)}.flatten
+  match_data = matchIds[0...100].map {|matchId| get_match_data(matchId)}
+  match_data.each {|match_info| create_match(match_info)}
+end
+
+seed
