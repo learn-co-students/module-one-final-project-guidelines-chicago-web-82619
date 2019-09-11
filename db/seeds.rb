@@ -5,7 +5,7 @@ require 'json'
 require 'pry'
 require_relative "../config/environment.rb"
 
-API_KEY = RGAPI-468f0039-c94e-4a6e-8fe8-de22755b38e8
+API_KEY = "RGAPI-468f0039-c94e-4a6e-8fe8-de22755b38e8"
 REGION = 'na1'
 #use fresh API key before presentation!!!!!!!
 
@@ -19,7 +19,7 @@ end
 #returns a list of summoner names
 def get_summoner_names
   # Make an API request for all summoners in a ranked division.
-  response_string = RestClient.get("https://na1.api.riotgames.com/lol/league/v4/entries/RANKED_SOLO_5x5/SILVER/II?page=1&api_key=#{API_KEY}")
+  response_string = RestClient.get("https://#{REGION}.api.riotgames.com/lol/league/v4/entries/RANKED_SOLO_5x5/SILVER/II?page=1&api_key=#{API_KEY}")
   sleep(0.84)
   summoner_data = JSON.parse(response_string)
   # For each summoner whose data is in summoner_data, return their name.
@@ -30,7 +30,7 @@ end
 
 #Using the summoner name, create a Summoner
 def create_summoner(summoner_name)
-  Summoner.create(summoner_name)
+  Summoner.find_or_create_by(summoner_name)
 end
 
 #Using the summoner name, return single account id
