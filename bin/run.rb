@@ -8,9 +8,9 @@ def run
   data = get_champion_data("9.17.1")
   create_champions(data)
   names = get_summoner_names
-  accountIds = names[0...2].map {|name| get_account_id(name)}
+  accountIds = names[0...50].map {|name| get_account_id(name)}
   matchIds = accountIds.map {|accountId| get_match_ids(accountId)}.flatten
-  match_data = matchIds[0...10].map {|matchId| get_match_data(matchId)}
+  match_data = matchIds[0...100].map {|matchId| get_match_data(matchId)}
   match_data.each {|match_info| create_match(match_info)}
 end
 
