@@ -5,6 +5,8 @@ def run
   #1st - Get a list of summoner names.
   #2nd - Get the accountId for the first summoner.
   #3rd - Get the matchIds for that accountId.
+  data = get_champion_data("9.17.1")
+  create_champions(data)
   names = get_summoner_names
   accountIds = names[0...2].map {|name| get_account_id(name)}
   matchIds = accountIds.map {|accountId| get_match_ids(accountId)}.flatten
