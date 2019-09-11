@@ -1,5 +1,5 @@
 require_relative '../config/environment'
-
+require 'tty-prompt'
 # TEST METHODS
 def run
   #1st - Get a list of summoner names.
@@ -12,7 +12,14 @@ def run
   match_data.each {|match_info| create_match(match_info)}
 end
 
-run
+def intro
+  prompt = TTY::Prompt.new
+  prompt.ask('What is your name?', default: ENV['USER'])
+  prompt.yes?('Do you like Ruby?')
+end
+
+intro
+#run
 
 #for tomorrow: sort out duplicate entries of summoner names
 #write methods
