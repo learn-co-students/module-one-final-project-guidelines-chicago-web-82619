@@ -14,5 +14,4 @@ end
 
 run
 
-#for tomorrow: sort out duplicate entries of summoner names
 #write methods
