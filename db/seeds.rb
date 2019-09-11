@@ -7,6 +7,7 @@ require_relative "../config/environment.rb"
 ############ CONSTANTS ############
 API_KEY = "RGAPI-468f0039-c94e-4a6e-8fe8-de22755b38e8"
 REGION = 'na1'
+PATCH_NUMBER = '9.17.1'
 #use fresh API key before presentation!!!!!!!
 ###################################
 
@@ -18,6 +19,7 @@ def get_champion_data(patch_number)
   champion_data = response_hash["data"]
 end
 
+#create all Champion objects with champion_data
 def create_champions(champion_data)
   champions = champion_data.keys
   champions.each do |champion|
@@ -93,7 +95,7 @@ def create_match(match_data)
     current_summoner = participant_data.find do |data|
       data["participantId"] == participant["participantId"]
     end
-    match.champion_id = current_summoner["championId"]
+    match.champion_id = Champion.find_by(champ_id: current_summoner["championId"]).id
     match.win = current_summoner["stats"]["win"]
     # Set the Match's game_id field.
     match.game_id = match_data["gameId"]
@@ -110,6 +112,8 @@ def create_match(match_data)
 end
 #################################
 def seed
+  #Create Champion objs.
+  create_champions(get_champion_data(PATCH_NUMBER))
   #1st - Get a list of summoner names.
   names = get_summoner_names
   #2nd - Get the encrypted account_ids for each summoner.
