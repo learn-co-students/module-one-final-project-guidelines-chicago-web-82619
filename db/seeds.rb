@@ -51,7 +51,7 @@ def get_match_ids(account_id)
   response_string = RestClient.get(url)
   sleep(0.84)
   match_history = JSON.parse(response_string)
-  match_ids = match_history["matches"].map {|match| match['gameId']}
+  match_ids = match_history["matches"].map {|match| match['gameId']}.uniq
 end
 
 #returns match data given a single match id
