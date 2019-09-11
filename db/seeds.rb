@@ -19,7 +19,7 @@ end
 #returns a list of summoner names
 def get_summoner_names
   # Make an API request for all summoners in a ranked division.
-  response_string = RestClient.get("https://na1.api.riotgames.com/lol/league/v4/entries/RANKED_SOLO_5x5/SILVER/II?page=1&api_key=#{API_KEY}")
+  response_string = RestClient.get("https://#{REGION}.api.riotgames.com/lol/league/v4/entries/RANKED_SOLO_5x5/SILVER/II?page=1&api_key=#{API_KEY}")
   sleep(1)
   summoner_data = JSON.parse(response_string)
   # For each summoner whose data is in summoner_data, return their name.
