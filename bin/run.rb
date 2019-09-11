@@ -15,26 +15,14 @@ def welcome
   line4 = "   /_/____ /_/ /_//_/ __  /_//_/ /_//_/ /_/ /_/ /_//_/ /_/       ".colorize(:color => :light_blue).on_light_white     
   line5 = "  /_/_/_/_//_/_/ /_/ /_/_/_//_/ /_//_/_/\\_//_/    /_/   /_/      ".colorize(:color => :light_blue).on_light_white  
   ascii = line0 + "\n" + line1 + "\n" + line2 + "\n" + line3 + "\n" + line4 + "\n" + line5 + "\n\n"
-  message = "Welcome to LolShark, the #1 stats site for League of Legends!".colorize(:color => :light_blue).on_light_white
+  message = "Welcome to LolShark, the #1 stats CLI for League of Legends!".colorize(:color => :light_blue).on_light_white
   PROMPT.say(ascii)
   PROMPT.say(message)
-end
-
-def 
+end 
 
 ########## HELPER METHODS - END ##########
 def run
   welcome
-  #1st - Get a list of summoner names.
-  #2nd - Get the accountId for the first summoner.
-  #3rd - Get the matchIds for that accountId.
-  # data = get_champion_data("9.17.1")
-  # create_champions(data)
-  # names = get_summoner_names
-  # accountIds = names[0...50].map {|name| get_account_id(name)}
-  # matchIds = accountIds.map {|accountId| get_match_ids(accountId)}.flatten
-  # match_data = matchIds[0...100].map {|matchId| get_match_data(matchId)}
-  # match_data.each {|match_info| create_match(match_info)}
 end
 
 run
