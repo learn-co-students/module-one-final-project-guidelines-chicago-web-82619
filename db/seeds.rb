@@ -27,14 +27,12 @@ def create_champions(champion_data)
   champions.each do |champion|
     key = champion_data[champion]["key"]
     champion_name = champion_data[champion]["name"]
-    puts "Creating champion #{champion_name}"
     Champion.create(champ_id: key, name: champion_name)
   end
 end
 
 #returns a list of summoner names
 def get_summoner_names
-  puts "Getting summoner names from #{TIER} #{DIVISION}!"
   # Make an API request for all summoners in a ranked division.
   response_string = RestClient.get("https://#{REGION}.api.riotgames.com/lol/league/v4/entries/RANKED_SOLO_5x5/#{TIER}/#{DIVISION}?page=1&api_key=#{API_KEY}")
   #sleep(1)
@@ -52,7 +50,6 @@ end
 
 #Using the summoner name, return single account id
 def get_account_id(summoner_name)
-  puts "Getting account_id for #{summoner_name}!"
   # Given the summoner's name, make an API request for account information.
   url = "https://#{REGION}.api.riotgames.com/lol/summoner/v4/summoners/by-name/#{summoner_name}?api_key=#{API_KEY}"
   response_string = RestClient.get(url)
@@ -64,7 +61,6 @@ end
 
 #returns an array of match ids given an account id
 def get_match_ids(account_id)
-  puts "Getting match_ids for #{account_id}!"
   # Given a summoner's accountId, make an API request for their match history.
   url = "https://#{REGION}.api.riotgames.com/lol/match/v4/matchlists/by-account/#{account_id}?api_key=#{API_KEY}"
   response_string = RestClient.get(url)
@@ -75,17 +71,15 @@ end
 
 #returns match data given a single match id
 def get_match_data(match_id)
-  puts "Getting match data for #{match_id}!"
   # Given a matchId, make an API request for the match data.
   url = "https://#{REGION}.api.riotgames.com/lol/match/v4/matches/#{match_id}?api_key=#{API_KEY}"
   response_string = RestClient.get(url)
-  #sleep(1)
+  sleep(1)
   match_data = JSON.parse(response_string)
 end
 
 #Given match data, creates a Match object for each player in the match.
 def create_match(match_data)
-  puts "Creating a new match!"
   participants = match_data["participantIdentities"]
   for participant in participants do
     # Create a new Match object.
