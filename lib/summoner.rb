@@ -17,6 +17,5 @@ class Summoner < ActiveRecord::Base
 
   def highest_pick_rate
     most_played = self.champions.uniq.max_by {|champion| self.pick_rate(champion.name)}
-    puts "The champion that #{self.name} picked the most is #{most_played.name} with a #{self.pick_rate(most_played.name)}% pick rate."
   end
 end

@@ -47,7 +47,7 @@ end
 
 #Using the summoner name, create a Summoner
 def create_summoner(summoner_name)
-  Summoner.find_or_create_by(summoner_name)
+  Summoner.find_or_create_by(name: summoner_name)
 end
 
 #Using the summoner name, return single account id
@@ -91,7 +91,7 @@ def create_match(match_data)
     # Create a new Match object.
     match = Match.new
     # Set the Match's summoner_id field.
-    summoner = create_summoner(name: participant["player"]["summonerName"])
+    summoner = create_summoner(participant["player"]["summonerName"])
     match.summoner_id = summoner.id
     # Set the Match's champion_id and win field.
     participant_data = match_data["participants"]
