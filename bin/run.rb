@@ -53,19 +53,23 @@ def ask_champion_win_rate(summoner)
 end
 
 def lookup_summoner(summoner_name)
+  spinner = TTY::Spinner.new("Loading [:spinner]", format: :dots)
+  spinner.auto_spin
   summoner = Summoner.find_by(name: summoner_name)
   if !summoner
     begin  
       accountId = get_account_id(summoner_name)
       matchIds = get_match_ids(accountId)
-      matchIds[0..100].each {|matchId| create_match(get_match_data(matchId))}
+      matchIds[0..25].each {|matchId| create_match(get_match_data(matchId))}
     rescue
-      PROMPT.say("Sorry, this summoner name doesn't seem to exist. Please try again.")
+      spinner.stop("Sorry, this summoner name doesn't seem to exist. Please try again.")
       return nil
     end
     create_summoner(summoner_name)
     summoner = Summoner.find_by(name: summoner_name)
   end
+  spinner.stop("Summoner found!")
+  summoner
 end
 
 def search_by_summoner
