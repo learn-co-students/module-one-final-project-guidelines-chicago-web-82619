@@ -8,6 +8,8 @@ require_relative "../config/environment.rb"
 API_KEY = "RGAPI-468f0039-c94e-4a6e-8fe8-de22755b38e8"
 REGION = 'na1'
 PATCH_NUMBER = '9.17.1'
+TIER = 'SILVER'
+DIVISION = 'I'
 #use fresh API key before presentation!!!!!!!
 ###################################
 
@@ -25,15 +27,16 @@ def create_champions(champion_data)
   champions.each do |champion|
     key = champion_data[champion]["key"]
     champion_name = champion_data[champion]["name"]
+    puts "Creating champion #{champion_name}"
     Champion.create(champ_id: key, name: champion_name)
   end
 end
 
 #returns a list of summoner names
 def get_summoner_names
-  puts "Getting summoner names from Silver 2!"
+  puts "Getting summoner names from #{TIER} #{DIVISION}!"
   # Make an API request for all summoners in a ranked division.
-  response_string = RestClient.get("https://#{REGION}.api.riotgames.com/lol/league/v4/entries/RANKED_SOLO_5x5/SILVER/II?page=1&api_key=#{API_KEY}")
+  response_string = RestClient.get("https://#{REGION}.api.riotgames.com/lol/league/v4/entries/RANKED_SOLO_5x5/#{TIER}/#{DIVISION}?page=1&api_key=#{API_KEY}")
   sleep(1)
   summoner_data = JSON.parse(response_string)
   # For each summoner whose data is in summoner_data, return their name.
@@ -113,17 +116,23 @@ end
 #################################
 def seed
   #Create Champion objs.
-  create_champions(get_champion_data(PATCH_NUMBER))
+  # create_champions(get_champion_data(PATCH_NUMBER))
   #1st - Get a list of summoner names.
   names = get_summoner_names
   #2nd - Get the encrypted account_ids for each summoner.
-  account_ids = names[0...50].map {|name| get_account_id(name)}
+  account_ids = names.map {|name| get_account_id(name)}
   #3rd - Get the matchIds for that accountId.
-  match_ids = account_ids.map {|accountId| get_match_ids(accountId)[0...20]}.flatten
+  match_ids = account_ids.map {|accountId| get_match_ids(accountId)}.flatten
+  print "#{match_ids.size} number of matches found!"
   #4th - Create a match object for each matchId.
   for match_id in match_ids do
-    create_match(get_match_data(match_id))
+    begin  
+      create_match(get_match_data(match_id)) 
+      raise 'probably HTTP error'
+    rescue
+      redo
+    end 
   end
 end
 
-seed
+#seed
