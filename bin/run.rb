@@ -32,34 +32,81 @@ def main_menu
 end
 
 def ask_champion_pick_rate(summoner)
-  message = "Please enter a champion name."
+  message = "Which champion would you like to know about?"
   champion_name = PROMPT.ask(message, required: true, convert: :string)
   pick_rate = summoner.pick_rate(champion_name)
   PROMPT.say("Hey #{summoner.name}, you pick #{champion_name} #{pick_rate}% of the time.\n\n")
 end
 
+def ask_champion_ban_rate(summoner)
+  message = "Which champion would you like to know about?"
+  champion_name = PROMPT.ask(message, required: true, convert: :string)
+  ban_rate = summoner.ban_rate(champion_name)
+  PROMPT.say("Hey #{summoner.name}, you ban #{champion_name} #{ban_rate}% of the time.\n\n")
+end
+
+def ask_champion_win_rate(summoner)
+  message = "Which champion would you like to know about?"
+  champion_name = PROMPT.ask(message, required: true, convert: :string)
+  win_rate = summoner.win_rate(champion_name)
+  PROMPT.say("Hey #{summoner.name}, you win games on #{champion_name} #{win_rate}% of the time.\n\n")
+end
+
+def lookup_summoner(summoner_name)
+  summoner = Summoner.find_by(name: summoner_name)
+  if !summoner
+    begin  
+      accountId = get_account_id(summoner_name)
+      matchIds = get_match_ids(accountId)
+      matchIds[0..100].each {|matchId| create_match(get_match_data(matchId))}
+    rescue
+      PROMPT.say("Sorry, this summoner name doesn't seem to exist. Please try again.")
+      return nil
+    end
+    create_summoner(summoner_name)
+    summoner = Summoner.find_by(name: summoner_name)
+  end
+end
+
 def search_by_summoner
   message = "Please enter a summoner name."
   summoner_name = PROMPT.ask(message, required: true, convert: :string)
-  summoner = create_summoner(summoner_name)
+  summoner = lookup_summoner(summoner_name)
+  if !summoner  
+    search_by_summoner 
+  end 
   while true  
     instructions = "What would you like to know?"
     choice = PROMPT.select(instructions) do |menu|
       menu.choice "your overall win rate?", 1
-      menu.choice "how much you picked a champion?", 2
-      menu.choice "champion you picked the most?", 3
-      menu.choice "return to main menu", 4
+      menu.choice "how often you picked a specific champion?", 2
+      menu.choice "how often you won with a specific champion?", 3
+      menu.choice "how often you ban a specific champion?", 4
+      menu.choice "champion you picked the most?", 5
+      menu.choice "champion you win the most on?", 6
+      menu.choice "champion you ban the most?", 7
+      menu.choice "return to main menu", 8
     end
     case choice
     when 1
-      win_rate = summoner.win_rate
+      win_rate = summoner.overall_win_rate
       PROMPT.say("Hey #{summoner_name}, your win rate is #{win_rate}%.\n\n")
     when 2
       ask_champion_pick_rate(summoner)
     when 3
+      ask_champion_win_rate(summoner)
+    when 4
+      ask_champion_ban_rate(summoner)
+    when 5
       most_played = summoner.highest_pick_rate
       PROMPT.say("Hey #{summoner_name}, the champion you pick the most is #{most_played.name} with a #{summoner.pick_rate(most_played.name)}% pick rate.\n\n")
-    when 4
+    when 6
+      most_wins = summoner.highest_win_rate
+      PROMPT.say("Hey #{summoner_name}, the champion you win the most on is #{most_wins.name} with a #{summoner.win_rate(most_wins.name)}% win rate.\n\n")
+    when 7
+      most_banned = summoner.highest_ban_rate
+      PROMPT.say("Hey #{summoner_name}, the champion you ban the most is #{most_banned.name} with a #{summoner.ban_rate(most_banned.name)}% ban rate.\n\n")
+    when 8
       break
     else
     end
