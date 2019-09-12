@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
     end
 
     def get_data
-        response_string = RestClient.get('https://api.nomics.com/v1/currencies/ticker?key=879800e3c81677c7f61fa01735a96e2e&ids=BTC,ETH,XRP,USDT,LTC&interval=1d,30d&convert=USD')
+        response_string = RestClient.get("https://api.nomics.com/v1/currencies/ticker?key=#{token}&ids=BTC,ETH,XRP,USDT,LTC&interval=1d,30d&convert=USD")
         response_hash = JSON.parse(response_string)
         response_hash
     end
@@ -103,6 +103,22 @@ class User < ActiveRecord::Base
         else
             puts "You don't have such coin!"
         end
+    end
+
+    def last_five_transactions
+        transactions = Transaction.all.where('user_id = ?', self.id).order('date desc').limit(5)
+        transactions
+    end
+
+    def self.best_traders
+        users = User.all.sort do |user|
+            user.account_value
+        end
+        users
+    end
+
+    def delete_account
+        User.find(self.id).delete
     end
 end
 
