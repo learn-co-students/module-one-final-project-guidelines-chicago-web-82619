@@ -16,6 +16,6 @@ class Summoner < ActiveRecord::Base
   end
 
   def highest_pick_rate
-    most_played = self.champions.uniq.max_by {|champion| self.pick_rate(champion.name)}
+    self.champions.uniq.max_by {|champion| self.pick_rate(champion.name)}
   end
 end
