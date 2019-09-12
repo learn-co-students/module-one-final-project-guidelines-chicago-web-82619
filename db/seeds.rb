@@ -5,7 +5,7 @@ require 'pry'
 require_relative "../config/environment.rb"
 
 ############ CONSTANTS ############
-API_KEY = "RGAPI-468f0039-c94e-4a6e-8fe8-de22755b38e8"
+API_KEY = "RGAPI-07aafdc9-c921-43d8-adfa-af206e120173"
 REGION = 'na1'
 PATCH_NUMBER = '9.17.1'
 TIER = 'SILVER'
@@ -37,7 +37,7 @@ def get_summoner_names
   puts "Getting summoner names from #{TIER} #{DIVISION}!"
   # Make an API request for all summoners in a ranked division.
   response_string = RestClient.get("https://#{REGION}.api.riotgames.com/lol/league/v4/entries/RANKED_SOLO_5x5/#{TIER}/#{DIVISION}?page=1&api_key=#{API_KEY}")
-  sleep(1)
+  #sleep(1)
   summoner_data = JSON.parse(response_string)
   # For each summoner whose data is in summoner_data, return their name.
   summoner_names = summoner_data.map do |summoner| 
@@ -56,7 +56,7 @@ def get_account_id(summoner_name)
   # Given the summoner's name, make an API request for account information.
   url = "https://#{REGION}.api.riotgames.com/lol/summoner/v4/summoners/by-name/#{summoner_name}?api_key=#{API_KEY}"
   response_string = RestClient.get(url)
-  sleep(1)
+  #sleep(1)
   # The JSON object contains summoner account information. Return the accountId.
   summoner_account_info = JSON.parse(response_string)
   account_id = summoner_account_info["accountId"]
@@ -68,7 +68,7 @@ def get_match_ids(account_id)
   # Given a summoner's accountId, make an API request for their match history.
   url = "https://#{REGION}.api.riotgames.com/lol/match/v4/matchlists/by-account/#{account_id}?api_key=#{API_KEY}"
   response_string = RestClient.get(url)
-  sleep(1)
+  #sleep(1)
   match_history = JSON.parse(response_string)
   match_ids = match_history["matches"].map {|match| match['gameId']}.uniq
 end
@@ -79,7 +79,7 @@ def get_match_data(match_id)
   # Given a matchId, make an API request for the match data.
   url = "https://#{REGION}.api.riotgames.com/lol/match/v4/matches/#{match_id}?api_key=#{API_KEY}"
   response_string = RestClient.get(url)
-  sleep(1)
+  #sleep(1)
   match_data = JSON.parse(response_string)
 end
 
