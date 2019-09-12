@@ -53,7 +53,7 @@ def ask_champion_win_rate(summoner)
 end
 
 def lookup_summoner(summoner_name)
-  spinner = TTY::Spinner.new("Loading [:spinner]", format: :dots)
+  spinner = TTY::Spinner.new("Locating summoner #{summoner_name} :spinner", format: :dots)
   spinner.auto_spin
   summoner = Summoner.find_by(name: summoner_name)
   if !summoner
