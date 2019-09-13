@@ -3,13 +3,14 @@ require 'rest-client'
 require 'json'
 require 'tty-prompt'
 require 'pry'
+require 'io/console'
 
 
 
-font = TTY::Font.new(:starwars)
+font = TTY::Font.new("3d")
 pastel = Pastel.new
 
-puts pastel.blue(font.write("Crypto", letter_spacing: 4))
+puts pastel.red(font.write("Crypto", letter_spacing: 4))
 puts pastel.yellow(font.write("Simulator"))
 
 spinner = TTY::Spinner.new
@@ -21,8 +22,8 @@ spinner.stop('Done!')
 
 
 def welcome
-   prompt = TTY::Prompt.new
-   user_input = prompt.select(("Welcome to Crypto Simulator!").colorize(:yellow)) do |menu|
+    prompt = TTY::Prompt.new
+    user_input = prompt.select(("Welcome to Crypto Simulator!").colorize(:yellow)) do |menu|
        menu.choice 'Sign In'.colorize(:green), "S"
        menu.choice 'Sign up'.colorize(:green), "C"
        menu.choice 'Exit'.colorize(:red), "See you next time!".colorize(:green).colorize(:background => :light_blue)
@@ -30,28 +31,36 @@ def welcome
    if user_input == "S"
        sign_in
    elsif user_input == "C"
+       system("clear")
        create_account
    else
+       system("clear")
+       puts "This app was made by A&A Corp. If you would like to see the rude version, please notify Avi later!".colorize(:red)
        return nil
    end
 end
 
 def sign_in
+   system("clear")
    puts "Enter your username".colorize(:green)
    input_name = gets.chomp
    user = User.all.find{|user| user.name == input_name}
    if user
-       puts "Enter your password"
-       input_password = gets.chomp
+       system("clear")
+       prompt = TTY::Prompt.new
+       input_password = prompt.mask("Enter your password:")
        if user.password == input_password
+           system("clear")
            menu(user)
        else
+           system("clear")
            puts "Wrong password provided".colorize(:red)
            welcome
        end
    else
-       puts "Username doesn't exist!".colorize(:red), ""
-       welcome
+        system("clear")
+        puts "Username doesn't exist!".colorize(:red), ""
+        welcome
    end
 end
 
@@ -60,22 +69,31 @@ def create_account
     username_input = gets.chomp
     user = User.all.find{|user| user.name == username_input}
     if user
+        system("clear")
         puts "This username already taken!"
-        create_account
+        welcome
     else
-        puts "Please enter your desired password!"
-        userpassword = gets.chomp
-        user = User.create(name: username_input, password: userpassword)
-        puts "Your account created successfully!"
-        menu(user)
+        system("clear")
+        prompt = TTY::Prompt.new
+        userpassword = prompt.mask("Please enter your desired password:")
+        confirm_password = prompt.mask("Please confirm your password:")
+        if userpassword == confirm_password
+            user = User.create(name: username_input, password: userpassword)
+            system("clear")
+            puts "Your account created successfully!"
+            menu(user)
+        else
+            system("clear")
+            puts "Password doesn't match!"
+            welcome
+        end
     end
 end
 
 def menu(user)
-    
     prompt = TTY::Prompt.new
     user_input = prompt.select(("==========MENU==========").colorize(:yellow)) do |menu|
-        menu.choice 'Check balance'.colorize(:green), "C"
+        menu.choice 'Check coin balance'.colorize(:green), "C"
         menu.choice 'Total portfolio value'.colorize(:green), "P"
         menu.choice 'Trade'.colorize(:green), "T"
         menu.choice 'Statistic'.colorize(:green), "L"
@@ -91,13 +109,19 @@ def menu(user)
         puts "Total portfolio value: $#{user.account_value.round(2)}"
         menu(user)
     elsif user_input == "T"
+        system("clear")
         trade_menu(user)
     elsif user_input == "L"
+        system("clear")
         statistic_menu(user)
     elsif user_input == "A"
         user.delete_account
+        system("clear")
+        puts "Your account was deleted succesfully!"
         welcome
-    else 
+    else
+        system("clear") 
+        puts "This app was made by A&A Corp. If you would like to see the rude version, please notify Avi later!".colorize(:red)
         return nil
     end
 end
@@ -110,6 +134,7 @@ def trade_menu(user)
         menu.choice 'Go back'.colorize(:red), "K"
     end
     if user_input == "P"
+        system("clear")
         if user.currencies.empty?
             puts "You don't own any coins!".colorize(:red)
             trade_menu(user)
@@ -118,7 +143,7 @@ def trade_menu(user)
             user_in = prompt.select(("Choose coin").colorize(:blue)) do |menu|
                 user.currencies.uniq.each do |currency|
                     if(user.amount(currency.name) > 0)
-                        menu.choice "#{currency.name}: amount:#{user.amount(currency.name)} price(ea): $#{user.price(currency.name)}", "#{currency.name}"
+                        menu.choice "#{currency.name}: amount:#{user.amount(currency.name)} price(ea): $#{user.price(currency.name).round(2)}", "#{currency.name}"
                     end
                 end
                 menu.choice "Go back".colorize(:red), "B"
@@ -132,18 +157,23 @@ def trade_menu(user)
             else
                 puts "How much would you like to sell? Enter amount please:"
                 amount = gets.chomp
+                system("clear")
                 user.sell_coin(user_in, amount.to_f)
-                puts "Transaction completed."
-                puts "Your new balance is $#{user.balance}"
-                puts "You now have #{user.amount(user_in)} #{user_in}(s)"
+                if amount.to_f < user.amount(user_in)
+                    system("clear")
+                    puts "Transaction completed."
+                    puts "Your new balance is $#{user.balance}"
+                    puts "You now have #{user.amount(user_in)} #{user_in}(s)"
+                end
                 trade_menu(user)
             end
         end
     elsif user_input == "C"
+        system("clear")
         prompt = TTY::Prompt.new
-        user_in = prompt.select(("Choose coin").colorize(:blue)) do |menu|
+        user_in = prompt.select(("Choose coin. Your USD balance: $#{user.balance}").colorize(:blue)) do |menu|
             Currency.all.each do |currency|
-                menu.choice "#{currency.name}: price(ea) $#{user.price(currency.name)}", "#{currency.name}" 
+                menu.choice "#{currency.name}: price(ea) $#{user.price(currency.name).round(2)}", "#{currency.name}" 
             end
             menu.choice "Go back".colorize(:red), "B"
             menu.choice "Main menu".colorize(:red), "M"
@@ -155,13 +185,15 @@ def trade_menu(user)
         else
             puts "How much would you like to invest? Enter amount please:"
             amount = gets.chomp
+            system("clear")
             user.buy_coin(user_in, amount.to_f)
             puts "Transaction completed."
-            puts "Your new balance is $#{user.balance}"
-            puts "You now have #{user.amount(user_in)} #{user_in}(s)"
+            puts "Your new balance is $#{user.balance.round(2)}"
+            puts "You now have #{user.amount(user_in).round(2)} #{user_in}(s)"
             trade_menu(user)
         end
-    else 
+    else
+        system("clear") 
         menu(user)
     end
 end
@@ -175,20 +207,25 @@ def statistic_menu(user)
             menu.choice 'Main menu'.colorize(:red), "E"
         end
         if user_input == "C"
+            system("clear")
             user_last_five(user)
             statistic_menu(user)
         elsif user_input == "P"
+            system("clear")
             platform_last_five
             statistic_menu(user)
         elsif user_input == "T"
+            system("clear")
             best_platform_trader
             statistic_menu(user)
         else
+            system("clear")
             menu(user)
         end
 end
 
 def total_portfolio_value(user)
+    system("clear")
     count = 0
     colors = [:bright_red, :bright_yellow, :bright_green, :bright_magenta, :bright_cyan, :bright_black]
     data = [
@@ -205,16 +242,20 @@ end
 
 
 def check_balance(user)
+    system("clear")
     if user.currencies.empty?
         puts "You don't own any coins!".colorize(:red)
     else 
         coins = []
+        counter = 1
         user.currencies.uniq.each do |currency|
-            coins << ["#{currency.abv}", "#{user.amount(currency.name).round(3)}", "#{user.price(currency.name).round(2)}", "$#{user.coin_value(currency.name).round(2)}"]
+            coins << ["#{counter}", "#{currency.abv}", "#{user.amount(currency.name).round(2)}", "#{user.price(currency.name).round(2)}", "$#{user.coin_value(currency.name).round(2)}"]
+            counter +=1
         end
-        table = TTY::Table.new ['Name','Ammount', 'Market price', 'Value'], coins
+        table = TTY::Table.new ['No.', 'Name','Ammount', 'Market price', 'Value'], coins
         renderer = TTY::Table::Renderer::Unicode.new(table)
         print renderer.render
+        puts "Your USD balance is: $#{user.balance}"
         puts
     end
 end
@@ -224,10 +265,12 @@ def user_last_five(user)
         puts "You haven't maid any transactions!".colorize(:red)
     else 
         transactions = []
+        counter = 1
         user.last_five_transactions.each do |transaction|
-            transactions << ["#{transaction.name}", "#{transaction.amount.round(2)}", "$#{transaction.price.round(3)}", "#{transaction.date}"]
+            transactions << ["#{counter}", "#{transaction.name}", "#{transaction.amount.round(2)}", "$#{transaction.price.round(2)}", "#{transaction.date}"]
+            counter += 1
         end
-        table = TTY::Table.new ['Name','Coin Amount', 'Rate', 'Date'], transactions
+        table = TTY::Table.new ['No.', 'Name','Coin Amount', 'Rate', 'Date'], transactions
         renderer = TTY::Table::Renderer::Unicode.new(table)
         print renderer.render
         puts
@@ -239,12 +282,14 @@ def platform_last_five
         puts "There haven't been any transactions!".colorize(:red)
     else 
         last_five = []
+        counter = 1
         transactions = Transaction.all.order('date desc').limit(5)
         transactions.each do |transaction|
             transaction_user = User.find(transaction.user_id)
-            last_five << ["#{transaction_user.name}", "#{transaction.name}", "#{transaction.amount.round(2)}", "$#{transaction.price.round(3)}", "#{transaction.date}"]
+            last_five << ["#{counter}", "#{transaction_user.name}", "#{transaction.name}", "#{transaction.amount.round(2)}", "$#{transaction.price.round(2)}", "#{transaction.date}"]
+            counter += 1
         end
-        table = TTY::Table.new ['Username', 'Currency','Coin Amount', 'Rate', 'Date'], last_five
+        table = TTY::Table.new ['No.', 'Username', 'Currency','Coin Amount', 'Rate', 'Date'], last_five
         renderer = TTY::Table::Renderer::Unicode.new(table)
         print renderer.render
         puts
@@ -252,14 +297,16 @@ def platform_last_five
 end
 
 def best_platform_trader
-        traders = []
-        User.best_traders.each do |trader|
-            traders << ["#{trader.name}", "#{trader.account_value.round(2)}"]
-        end
-        table = TTY::Table.new ['Username','Total Portfolio Value'], traders
-        renderer = TTY::Table::Renderer::Unicode.new(table)
-        print renderer.render
-        puts
+    traders = []
+    counter = 1
+    User.best_traders.each do |trader|
+        traders << ["#{counter}", "#{trader.name}", "#{trader.account_value.round(2)}"]
+        counter +=1
+    end
+    table = TTY::Table.new ['No.', 'Username','Total Portfolio Value'], traders
+    renderer = TTY::Table::Renderer::Unicode.new(table)
+    print renderer.render
+    puts
 end
 
 

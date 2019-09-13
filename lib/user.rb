@@ -116,6 +116,7 @@ class User < ActiveRecord::Base
 
 
     def delete_account
+        Transaction.all.where('user_id = ?', self.id).each {|transaction| transaction.delete}
         User.find(self.id).delete
     end
 end
