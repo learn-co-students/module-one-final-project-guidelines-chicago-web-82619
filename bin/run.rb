@@ -72,19 +72,23 @@ def create_account
         system("clear")
         puts "This username already taken!"
         welcome
+    elsif username_input.length < 3
+        system("clear")
+        puts "Username is too short"
+        welcome
     else
         system("clear")
         prompt = TTY::Prompt.new
         userpassword = prompt.mask("Please enter your desired password:")
         confirm_password = prompt.mask("Please confirm your password:")
-        if userpassword == confirm_password
+        if userpassword == confirm_password && userpassword.length >= 4
             user = User.create(name: username_input, password: userpassword)
             system("clear")
             puts "Your account created successfully!"
             menu(user)
         else
             system("clear")
-            puts "Password doesn't match!"
+            puts "Password doesn't match or it's too short (min length 4 characters)!"
             welcome
         end
     end
