@@ -10,6 +10,27 @@ PROMPT = TTY::Prompt.new(active_color: :bright_white)
 ########## HELPER METHODS - BEG ##########
 
 def welcome
+  line0 = "                         @@@@@@@@@    \n".colorize(:color => :light_blue)
+  line1 = "          @@@@@@@@@@@@@@@@@@@@@@      \n".colorize(:color => :light_blue)
+  line2 = "      @@@@@@@@@@@@@@@@@@@@@@@@@       \n".colorize(:color => :light_blue)
+  line3 = "    @@@@@@@@@@@@@@@@@@@@@@@@@@@@      \n".colorize(:color => :light_blue)
+  line4 = " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     \n".colorize(:color => :light_blue)
+  line5 = " @@@@@@@@ @@@@@@@@@@@@@@@@@@@@@@@@.   \n".colorize(:color => :light_blue)
+  line6 = "         @@@@@@@@  @@@@@@@@@@@@@@@    \n".colorize(:color => :light_blue)
+  line7 = "           #@@@@     @@   @@@@@@@@    \n".colorize(:color => :light_blue)
+  line8 = "         @@@@@@@           @@@@@@@    \n".colorize(:color => :light_blue)
+  line9 = "        @@@@#              @@@@@@     \n".colorize(:color => :light_blue)
+  line10 = "       @@.                 @@@@@/     \n".colorize(:color => :light_blue)
+  line11 = "      @      @@@        %@@@@@@       \n".colorize(:color => :light_blue)
+  line12 = "                @@@     .@@@@@        \n".colorize(:color => :light_blue)
+  line13 = "                  @@@@@@@@@@@         \n".colorize(:color => :light_blue)
+  line14 = "                   @@@@@(@            \n".colorize(:color => :light_blue)
+  line15 = "                   @@@@               \n".colorize(:color => :light_blue)
+  line16 = "                   @@@                \n".colorize(:color => :light_blue)
+  line17 = "                  @@@                 \n".colorize(:color => :light_blue)
+  line18 = "               @@                    \n".colorize(:color => :light_blue)
+                                       
+ shark = line0 + line1 + line2+ line3 + line4 + line5 + line6 + line7 + line8 + line9 + line10 + line11 + line12 + line13 + line14 + line15 + line16 + line17 + line18                             
   line0 = "   _       _     _                _      ".colorize(:color => :light_blue).on_light_white    
   line1 = "  | | ___ | |___| |__   __ _ _ __| | __  ".colorize(:color => :light_blue).on_light_white
   line2 = "  | |/ _ \\| / __| '_ \\ / _` | '__| |/ /  ".colorize(:color => :light_blue).on_light_white
@@ -17,6 +38,7 @@ def welcome
   line4 = "  |_|\\___/|_|___/_| |_|\\__,_|_|  |_|\\_\\  ".colorize(:color => :light_blue).on_light_white
   ascii = line0 + "\n" + line1 + "\n" + line2 + "\n" + line3 + "\n" + line4 + "\n\n"
   message = "Welcome to LolShark, the #1 stats CLI for League of Legends!".colorize(:color => :light_blue).on_light_white
+  PROMPT.say(shark)
   PROMPT.say(ascii)
   PROMPT.say(message)
 end 
@@ -208,3 +230,6 @@ def run
 end
 
 run
+
+
+
