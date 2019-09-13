@@ -162,19 +162,13 @@ def trade_menu(user)
                 amount = gets.chomp
                 system("clear")
                 user.sell_coin(user_in, amount.to_f)
-                if amount.to_f < user.amount(user_in) && amount.to_f > 0
-                    system("clear")
-                    puts "Transaction completed."
-                    puts "Your new balance is $#{user.balance}"
-                    puts "You now have #{user.amount(user_in)} #{user_in}(s)"
-                end
                 trade_menu(user)
             end
         end
     elsif user_input == "C"
         system("clear")
         prompt = TTY::Prompt.new
-        user_in = prompt.select(("Choose coin. Your USD balance: $#{user.balance}").colorize(:blue)) do |menu|
+        user_in = prompt.select(("Choose coin. Your USD balance: $#{user.balance.round(2)}").colorize(:blue)) do |menu|
             Currency.all.each do |currency|
                 menu.choice "#{currency.name}: price(ea) $#{user.price(currency.name).round(2)}", "#{currency.name}" 
             end
@@ -189,20 +183,10 @@ def trade_menu(user)
             puts "How much would you like to invest? Enter amount please:"
             amount = gets.chomp
             system("clear")
-            if amount.to_f < user.balance && amount.to_f > 0
-                user.buy_coin(user_in, amount.to_f)
-                puts "Transaction completed."
-                puts "Your new balance is $#{user.balance.round(2)}"
-                puts "You now have #{user.amount(user_in).round(2)} #{user_in}(s)"
-            elsif amount.to_f < 0
-                puts  "Please enter amount greater than 0!"
-            else
-                puts  "You don't have enough coin on your balance!"
-            end
+            user.buy_coin(user_in, amount.to_f)
             trade_menu(user)
         end
-    else
-        system("clear") 
+    else 
         menu(user)
     end
 end

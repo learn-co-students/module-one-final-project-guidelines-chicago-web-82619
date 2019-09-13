@@ -74,12 +74,15 @@ class User < ActiveRecord::Base
     def buy_coin(name, amount)
         coin = find_coin_in_db(name)
         if coin
-            if amount <= balance && amount > 0
+            if amount <= self.balance && amount > 0 
                 amount_of_coins  = convert_to_coin(name, amount)
                 Transaction.create(user_id: self.id, currency_id: coin.id, name: name, amount: amount_of_coins, price: price(name), date: DateTime.now)
                 self.balance -= amount
                 self.save
                 self.reload
+                puts "Transaction completed."
+                puts "Your new balance is $#{self.balance.round(2)}"
+                puts "You now have #{self.amount(name).round(2)} #{name}(s)"
             else
                 if(amount <= 0)
                     puts "Please enter amount greater than 0!"
@@ -95,12 +98,15 @@ class User < ActiveRecord::Base
     def sell_coin(name, amount)
         coin  = find_user_coin(name)
         if coin
-            if amount(name) >= amount && amount > 0
+            if self.amount(name) >= amount && amount > 0
                 amount_of_dollars = amount * price(name)
                 Transaction.create(user_id: self.id, currency_id: coin.id, name: name, amount: (amount * -1), price: price(name), date: DateTime.now)
                 self.balance += amount_of_dollars
                 self.save
                 self.reload
+                puts "Transaction completed."
+                puts "Your new balance is $#{self.balance}"
+                puts "You now have #{self.amount(name)} #{amount}(s)"
             else
                  if(amount <= 0)
                     puts "Please enter amount greater than 0!"
