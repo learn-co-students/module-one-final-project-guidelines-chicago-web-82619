@@ -9,7 +9,7 @@ user1 = User.create(name: "avinash", password: "1111")
 user2 = User.create(name: "andrew", password: "1111")
 user3 = User.create(name: "joseph's baby", password: "1111")
 user4 = User.create(name: "oofDaddyoof", password: "1111")
-user5 = User.create(name: "AviDealer", password: "1111")
+user5 = User.create(name: "jenniffer", password: "1111")
 
 
 

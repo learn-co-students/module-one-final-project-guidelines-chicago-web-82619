@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 20190910192434) do
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "password"
-    t.float  "balance",  default: 500000.0
+    t.float  "balance",  default: 50000.0
   end
 
 end

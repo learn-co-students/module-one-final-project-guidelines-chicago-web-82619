@@ -74,14 +74,18 @@ class User < ActiveRecord::Base
     def buy_coin(name, amount)
         coin = find_coin_in_db(name)
         if coin
-            if amount <= balance
+            if amount <= balance && amount > 0
                 amount_of_coins  = convert_to_coin(name, amount)
                 Transaction.create(user_id: self.id, currency_id: coin.id, name: name, amount: amount_of_coins, price: price(name), date: DateTime.now)
                 self.balance -= amount
                 self.save
                 self.reload
             else
-                puts "You don't have enough money on your balance!"
+                if(amount <= 0)
+                    puts "Please enter amount greater than 0!"
+                else
+                    puts "You don't have enough money on your balance!"
+                end
             end
         else
             puts "We don't sell such coin on our platform!"
@@ -91,14 +95,18 @@ class User < ActiveRecord::Base
     def sell_coin(name, amount)
         coin  = find_user_coin(name)
         if coin
-            if amount(name) >= amount
+            if amount(name) >= amount && amount > 0
                 amount_of_dollars = amount * price(name)
                 Transaction.create(user_id: self.id, currency_id: coin.id, name: name, amount: (amount * -1), price: price(name), date: DateTime.now)
                 self.balance += amount_of_dollars
                 self.save
                 self.reload
             else
-                puts "You don't have enough coins!"
+                 if(amount <= 0)
+                    puts "Please enter amount greater than 0!"
+                else
+                    puts "You don't have enough coins on your balance!"
+                end
             end
         else
             puts "You don't have such coin!"
@@ -111,7 +119,7 @@ class User < ActiveRecord::Base
     end
 
     def self.best_traders
-        users = User.all.sort_by {|user| user.account_value}.reverse 
+        users = User.all.sort_by {|user| user.account_value}.reverse
     end
 
 
@@ -119,5 +127,10 @@ class User < ActiveRecord::Base
         Transaction.all.where('user_id = ?', self.id).each {|transaction| transaction.delete}
         User.find(self.id).delete
     end
+
+    # def delete_currency
+    #     coins = self.currencies.select{|currency| self.amount(currency.name) <= 0}
+
+    # end
 end
 

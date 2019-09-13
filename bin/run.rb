@@ -110,7 +110,6 @@ def menu(user)
         menu(user)
     elsif user_input == "P"
         total_portfolio_value(user)
-        puts "Total portfolio value: $#{user.account_value.round(2)}"
         menu(user)
     elsif user_input == "T"
         system("clear")
@@ -132,7 +131,7 @@ end
 
 def trade_menu(user)
     prompt = TTY::Prompt.new
-    user_input = prompt.select(("What would you like to today?").colorize(:yellow)) do |menu|
+    user_input = prompt.select(("What would you like to do today?").colorize(:yellow)) do |menu|
         menu.choice 'Buy'.colorize(:green), "C"
         menu.choice 'Sell'.colorize(:green), "P"
         menu.choice 'Go back'.colorize(:red), "K"
@@ -163,7 +162,7 @@ def trade_menu(user)
                 amount = gets.chomp
                 system("clear")
                 user.sell_coin(user_in, amount.to_f)
-                if amount.to_f < user.amount(user_in)
+                if amount.to_f < user.amount(user_in) && amount.to_f > 0
                     system("clear")
                     puts "Transaction completed."
                     puts "Your new balance is $#{user.balance}"
@@ -190,10 +189,16 @@ def trade_menu(user)
             puts "How much would you like to invest? Enter amount please:"
             amount = gets.chomp
             system("clear")
-            user.buy_coin(user_in, amount.to_f)
-            puts "Transaction completed."
-            puts "Your new balance is $#{user.balance.round(2)}"
-            puts "You now have #{user.amount(user_in).round(2)} #{user_in}(s)"
+            if amount.to_f < user.balance && amount.to_f > 0
+                user.buy_coin(user_in, amount.to_f)
+                puts "Transaction completed."
+                puts "Your new balance is $#{user.balance.round(2)}"
+                puts "You now have #{user.amount(user_in).round(2)} #{user_in}(s)"
+            elsif amount.to_f < 0
+                puts  "Please enter amount greater than 0!"
+            else
+                puts  "You don't have enough coin on your balance!"
+            end
             trade_menu(user)
         end
     else
@@ -237,11 +242,16 @@ def total_portfolio_value(user)
     ]
     user.currencies.uniq.each do |currency|
         count += 1
-        data << {name: currency.abv, value: user.coin_value(currency.name), color: colors[count], fill: '*'}
+        if user.amount(currency.name) > 0
+           data << {name: currency.abv, value: user.coin_value(currency.name), color: colors[count], fill: '*'}
+        end
     end
 
-    pie_chart = TTY::Pie.new(data: data, radius: 5, legend: {format: "%<name>s $%<value>d (%<percent>.2f%%)"})
+    account_val = data.map{|hash| hash[:value]}.sum
+
+    pie_chart = TTY::Pie.new(data: data, radius: 5, legend: {format: "%<name>s $%<value>.2f (%<percent>.2f%%)"})
     print pie_chart
+    puts puts "Total portfolio value: $#{account_val.round(2)}"
 end
 
 
@@ -253,13 +263,16 @@ def check_balance(user)
         coins = []
         counter = 1
         user.currencies.uniq.each do |currency|
-            coins << ["#{counter}", "#{currency.abv}", "#{user.amount(currency.name).round(2)}", "#{user.price(currency.name).round(2)}", "$#{user.coin_value(currency.name).round(2)}"]
-            counter +=1
+            if user.amount(currency.name) > 0
+                coins << ["#{counter}", "#{currency.abv}", "#{user.amount(currency.name).round(2)}", "#{user.price(currency.name).round(2)}", "$#{user.coin_value(currency.name).round(2)}"]
+                counter +=1
+            end
         end
         table = TTY::Table.new ['No.', 'Name','Ammount', 'Market price', 'Value'], coins
         renderer = TTY::Table::Renderer::Unicode.new(table)
         print renderer.render
-        puts "Your USD balance is: $#{user.balance}"
+        puts
+        puts "Your USD balance is: $#{user.balance.round(2)}"
         puts
     end
 end
