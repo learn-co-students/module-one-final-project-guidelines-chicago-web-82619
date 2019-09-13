@@ -111,13 +111,12 @@ class User < ActiveRecord::Base
     end
 
     def self.best_traders
-        users = User.all.sort do |user|
-            user.account_value
-        end
-        users
+        users = User.all.sort_by {|user| user.account_value}.reverse 
     end
 
+
     def delete_account
+        Transaction.all.where('user_id = ?', self.id).each {|transaction| transaction.delete}
         User.find(self.id).delete
     end
 end
